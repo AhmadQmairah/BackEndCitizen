@@ -4,9 +4,12 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
+from .models import Issue
+
 
 class UserCreateAPIView(CreateAPIView):
     serializer_class = UserCreateSerializer
+
 
 class UserLoginAPIView(APIView):
     serializer_class = UserLoginSerializer
@@ -18,3 +21,18 @@ class UserLoginAPIView(APIView):
             valid_data = serializer.data
             return Response(valid_data, status=HTTP_200_OK)
         return Response(serializer.errors, HTTP_400_BAD_REQUEST)
+
+
+class ReportIssue(APIView):
+
+    def post(self, request):
+        description = request.data["description"]
+        name = request.data["name"]
+        phone_number = request.data["phone_number"]
+        image = request.data.get("image")
+        lat = request.data["lat"]
+        lng = request.data["lng"]
+
+        Issue.objects.create(description=description, name=name,
+                             phone_number=phone_number, image=image, lat=lat, lng=lng)
+        return Response()
